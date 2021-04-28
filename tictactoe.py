@@ -1,282 +1,185 @@
-import random
-class Tic-Tac-Toe:
-    
-    def drawBoard(board):
-        print('   |   |')
-        print(' ' + board[7] + ' | ' + board[8] + ' | ' + board[9])
-        print('   |   |')
-        print('-----------')
-        print('   |   |')
-        print(' ' + board[4] + ' | ' + board[5] + ' | ' + board[6])
-        print('   |   |')
-        print('-----------')
-        print('   |   |')
-        print(' ' + board[1] + ' | ' + board[2] + ' | ' + board[3])
-        print('   |   |')
+from random import *
+from time import *
 
-    def inputPlayerLetter():
-        letter = ''
-        while not (letter == 'X' or letter == 'O'):
-                print('Do you want to be X or O?')
-                letter = input().upper()
-                if letter == 'X':
-                    return ['X', 'O']
-                else:
-                    return ['O', 'X']
-    def WhoGoesFirst():
 
-        if random.randint(0, 1) == 0:
-
-            return 'player1'
-
+class TicTacToe:
+    def __init__(self):
+        print("Welcome to the Game of TIC-TAC-TOE")
+        print("Do you want to: ")
+        print("1: play against Computer")
+        print("2: play against Another Player")
+        print("3: Quit")
+        TicTacToe.choice = input("Type 1, 2, or 3: ")
+        while TicTacToe.choice not in ['1', '2', '3']:
+            TicTacToe.choice = input("Please type 1,2 or 3 as your Choice: ")
+        if TicTacToe.choice == "1":
+            print("You are playing against a robot. Good Luck!")
+            TicTacToe.GameType = "S"
+        elif TicTacToe.choice == "2":
+            print("You can play against your new enemy!")
+            TicTacToe.GameType = "M"
         else:
+            print("Are you chickening out?")
+            TicTacToe.GameType = ""
+            return
 
-            return 'player2'
+        Board()
+        TicTacToe.letter = choice(['X', 'O'])
+        TicTacToe.Round()
 
-
-
-    def playAgain():
-
-        print('Do you want to play again? (yes or no)')
-
-        return input().lower().startswith('y')
-
-    def makeMove(board, letter, move):
-        board[move] = letter
-
-
-
-    def isWinner(bo, le):
-
-       return ((bo[7] == le and bo[8] == le and bo[9] == le) or # across the top
-
-       (bo[4] == le and bo[5] == le and bo[6] == le) or # across the middle
-
-      (bo[1] == le and bo[2] == le and bo[3] == le) or # across the bottom
-
-        (bo[7] == le and bo[4] == le and bo[1] == le) or # down the left side
-
-      (bo[8] == le and bo[5] == le and bo[2] == le) or # down the middle
-
-       (bo[9] == le and bo[6] == le and bo[3] == le) or # down the right side
-
-       (bo[7] == le and bo[5] == le and bo[3] == le) or # diagonal
-
-        (bo[9] == le and bo[5] == le and bo[1] == le)) # diagonal
-
-
-
-    def getBoardCopy(board):
-
-        dupeBoard = []
-
-
-        for i in board:
-
-           dupeBoard.append(i)
-
-
-        return dupeBoard
-
-    def isSpaceFree(board, move):
-
-
-       return board[move] == ' '
-
-
-    def getPlayerMove(board):
-
-
-
-        move = ' '
-
-        while move not in '1 2 3 4 5 6 7 8 9'.split() or not isSpaceFree(board, int(move)):
-
-            print('What is your next move? (1-9)')
-
-            move = input()
-
-            return int(move)
-
-
-
-    def chooseRandomMoveFromList(board, movesList):
-
-        possibleMoves = []
-
-        for i in movesList:
-
-            if isSpaceFree(board, i):
-
-                possibleMoves.append(i)
-
-
-
-        if len(possibleMoves) != 0:
-            return random.choice(possibleMoves)
-
+        if TicTacToe.GameWon == True:
+            print(TicTacToe.WinningType, "Wins!")
         else:
+            print("Draw!")
 
-           return None
+        playAgain = input("Do you want to play again? Yes or No: ")
+        if playAgain in ['Yes', 'y', 'Y', 'yes']:
+            TicTacToe()
 
+    def Round():
+        TicTacToe.GameWon = False
+        while not TicTacToe.GameWon:
+            TicTacToe.Move()
+            TicTacToe.CheckWin()
+            TicTacToe.ChangeType()
 
+            if TicTacToe.GameType == "S" and TicTacToe.GameWon == False:
+                print(TicTacToe.letter + "'s Go...")
+                sleep(1)
+                Player.GetPlayerChoice()
+                TicTacToe.CheckWin()
+                TicTacToe.ChangeType()
 
-    def getplayer2Move(board, player2Letter):
+    def Move():
+        TicTacToe.VerifyPosition()
+        Board.drawBoard()
 
-        if player2Letter == 'X':
-
-            playerLetter = 'O'
-
+    def ChangeType():
+        if TicTacToe.letter == 'X':
+            TicTacToe.letter = 'O'
         else:
-
-            playerLetter = 'X'
-
-
-        for i in range(1, 10):
-
-           copy = getBoardCopy(board)
-
-        if isSpaceFree(copy, i):
-
-               makeMove(copy, player2Letter, i)
-
-               if isWinner(copy, player2Letter):
-
-                    return i
-
-
-        for i in range(1, 10):
-
-           copy = getBoardCopy(board)
-
-        if isSpaceFree(copy, i):
-
-               makeMove(copy, player2Letter, i)
-
-               if isWinner(copy, player2Letter):
-
-                    return i
-
-
-        move = chooseRandomMoveFromList(board, [1, 3, 7, 9])
-
-        if move != None:
-
-            return move
-
-
-        if isSpaceFree(board, 5):
-
-             return 5
-
-
-
-        return chooseRandomMoveFromList(board, [2, 4, 6, 8])
-
-
-    def isBoardFull(board):
-
-
-        for i in range(1, 10):
-
-            if isSpaceFree(board, i):
-
-               return False
-
-        return True
-
-
-
-
-
-    print('Welcome to Tic Tac Toe!')
-
-
-
-    while True:
-
-
-        theBoard = [' '] * 10
-
-        playerLetter, player2Letter = inputPlayerLetter()
-
-        turn = WhoGoesFirst()
-
-        print('The ' + turn + ' will go first.')
-
-        gameIsPlaying = True
-
-
-
-        while gameIsPlaying:
-
-            if turn == 'player':
-
-                 # Player’s turn.
-
-                drawBoard(theBoard)
-
-                move = getPlayerMove(theBoard)
-
-                makeMove(theBoard, playerLetter, move)
-
-                if isWinner(theBoard, playerLetter):
-
-                    drawBoard(theBoard)
-
-                    print('Hooray! You have won the game!')
-
-                    gameIsPlaying = False
-
-                else:
-
-                     if isBoardFull(theBoard):
-
-                         drawBoard(theBoard)
-
-                         print('The game is a tie!')
-
-                         break
-
-                     else:
-                         turn = 'computer'
-
-
-
+            TicTacToe.letter = 'X'
+
+    def VerifyPosition():
+        Valid = False
+        print(TicTacToe.letter + "'s Go...")
+        while not Valid:
+            Position = input("Please type where you wish to place: ")
+            while Position.isdigit() == False or int(Position) > 9 or int(Position) <= 0:
+                Position = input("Please type a valid integer between 1 and 9: ")
+            TicTacToe.Position = int(Position)
+            if Board.cells[TicTacToe.Position - 1] == 'X' or Board.cells[TicTacToe.Position - 1] == 'O':
+                Valid = False
+                print("That is an invalid square, please try again ")
             else:
+                Valid = True
+        Board.cells[TicTacToe.Position - 1] = TicTacToe.letter
 
-                 # Computer’s turn.
+    def CheckWin():
+        if ((Board.cells[0] == TicTacToe.letter) and (Board.cells[1] == TicTacToe.letter) and (
+                Board.cells[2] == TicTacToe.letter)) or (
+                (Board.cells[3] == TicTacToe.letter) and (Board.cells[4] == TicTacToe.letter) and (
+                Board.cells[5] == TicTacToe.letter)) or (
+                (Board.cells[6] == TicTacToe.letter) and (Board.cells[7] == TicTacToe.letter) and (
+                Board.cells[8] == TicTacToe.letter)) or (
+                # Row Check^^^^^^^
+                (Board.cells[0] == TicTacToe.letter) and (Board.cells[3] == TicTacToe.letter) and (
+                Board.cells[6] == TicTacToe.letter)) or (
+                (Board.cells[1] == TicTacToe.letter) and (Board.cells[4] == TicTacToe.letter) and (
+                Board.cells[7] == TicTacToe.letter)) or (
+                (Board.cells[2] == TicTacToe.letter) and (Board.cells[5] == TicTacToe.letter) and (
+                Board.cells[8] == TicTacToe.letter)) or (
+                # Column Check^^^^
+                (Board.cells[0] == TicTacToe.letter) and (Board.cells[4] == TicTacToe.letter) and (
+                Board.cells[8] == TicTacToe.letter)) or (
+                (Board.cells[2] == TicTacToe.letter) and (Board.cells[4] == TicTacToe.letter) and (
+                Board.cells[6] == TicTacToe.letter)):
+            # Diagonal Check^^
+            TicTacToe.WinningType = TicTacToe.letter
+            TicTacToe.GameWon = True
+        if TicTacToe.GameWon != True:  # if no one wins (potentially on the last go...)
+            DrawCheck = 0
+            for i in range(0, 9):  # checks the number of spaces left in the board out of 9 squares, 0-8
+                if Board.cells[i] == ' ':
+                    DrawCheck = DrawCheck + 1
+            if DrawCheck == 0:  # if there are no squares...
+                TicTacToe.GameWon = 'Draw'
 
-                 move = getplayer2Move(theBoard, player2Letter)
 
-                 makeMove(theBoard, player2Letter, move)
+class Player:
+    def GetPlayerChoice():
+        Player.FindEmptySpaces()
+        Player.PlayerMove()
+        Board.drawBoard()  #
+
+    def FindEmptySpaces():
+        Player.EmptySpaces = []
+        for i in range(0, 9):  #
+            if Board.cells[i] == ' ':  #
+                Player.EmptySpaces.append(i)  #
+
+    def PlayerMove():
+        Player.Change = False
+        OriginalType = TicTacToe.letter  #
+        for j in range(0, 2):  #
+            for i in range(0, len(Player.EmptySpaces)):  #
+                if not Player.Change:  #
+                    Player.CheckPlayerWin((Player.EmptySpaces[i]))  #
+                if Player.Change:  # If there is a change...
+                    Board.cells[Player.EmptySpaces[i]] = OriginalType  #
+                    TicTacToe.letter = OriginalType
+                    return
+            TicTacToe.ChangeType()  #
+        TicTacToe.letter = OriginalType
+        Board.cells[choice(Player.EmptySpaces)] = OriginalType  #
+
+    def CheckPlayerWin(SpaceToCheck):
+        if (SpaceToCheck in [6, 3, 0] and Board.cells[SpaceToCheck + 1] == TicTacToe.letter and Board.cells[
+            SpaceToCheck + 2] == TicTacToe.letter) or (  #
+                SpaceToCheck in [7, 4, 1] and Board.cells[SpaceToCheck + 1] == TicTacToe.letter and Board.cells[
+            SpaceToCheck - 1] == TicTacToe.letter) or (  #
+                SpaceToCheck in [8, 5, 2] and Board.cells[SpaceToCheck - 1] == TicTacToe.letter and Board.cells[
+            SpaceToCheck - 2] == TicTacToe.letter) or (  #
+                SpaceToCheck in [6, 7, 8] and Board.cells[SpaceToCheck - 3] == TicTacToe.letter and Board.cells[
+            SpaceToCheck - 6] == TicTacToe.letter) or (  #
+                SpaceToCheck in [5, 4, 3] and Board.cells[SpaceToCheck - 3] == TicTacToe.letter and Board.cells[
+            SpaceToCheck + 3] == TicTacToe.letter) or (  #
+                SpaceToCheck in [2, 1, 0] and Board.cells[SpaceToCheck + 3] == TicTacToe.letter and Board.cells[
+            SpaceToCheck + 6] == TicTacToe.letter) or (  #
+                SpaceToCheck == 0 and Board.cells[SpaceToCheck + 4] == TicTacToe.letter and Board.cells[
+            SpaceToCheck + 8] == TicTacToe.letter) or (  #
+                SpaceToCheck == 2 and Board.cells[SpaceToCheck + 2] == TicTacToe.letter and Board.cells[
+            SpaceToCheck + 4] == TicTacToe.letter) or (  #
+                SpaceToCheck == 6 and Board.cells[SpaceToCheck - 2] == TicTacToe.letter and Board.cells[
+            SpaceToCheck - 4] == TicTacToe.letter) or (  #
+                SpaceToCheck == 8 and Board.cells[SpaceToCheck - 4] == TicTacToe.letter and Board.cells[
+            SpaceToCheck - 8] == TicTacToe.letter) or (  #
+                SpaceToCheck == 4 and ((Board.cells[SpaceToCheck + 2] == TicTacToe.letter and Board.cells[
+            SpaceToCheck - 2] == TicTacToe.letter) or (  #
+                                               Board.cells[SpaceToCheck + 4] == TicTacToe.letter and Board.cells[
+                                           SpaceToCheck - 4] == TicTacToe.letter))):  #
+            Player.Change = True
 
 
+class Board:
+    def __init__(self):
+        Board.cells = [' ', ' ', ' ',
+                       ' ', ' ', ' ',
+                       ' ', ' ', ' ']
+        Board.drawBoard()
 
-                 if isWinner(theBoard, player2Letter):
-
-                     drawBoard(theBoard)
-
-                     print('The computer has beaten you! You lose.')
-
-                     gameIsPlaying = False
-
-                 else:
-
-                     if isBoardFull(theBoard):
-
-                         drawBoard(theBoard)
-
-                         print('The game is a tie!')
-
-                         break
-
-                     else:
-
-                        turn = 'player'
+    def drawBoard():
+        print('   |   |')
+        print(' ' + Board.cells[6] + ' | ' + Board.cells[7] + ' | ' + Board.cells[8])
+        print('   |   |')
+        print('-----------')
+        print('   |   |')
+        print(' ' + Board.cells[3] + ' | ' + Board.cells[4] + ' | ' + Board.cells[5])
+        print('   |   |')
+        print('-----------')
+        print('   |   |')
+        print(' ' + Board.cells[0] + ' | ' + Board.cells[1] + ' | ' + Board.cells[2])
+        print('   |   |')
 
 
-
-        if not playAgain():
-
-             break
+TicTacToe()
