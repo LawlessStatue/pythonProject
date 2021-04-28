@@ -1,4 +1,7 @@
         Final Project Paper (Computer Science) 
+
+Just wanted to point out that any errors in the final project code were intended to be there. Please don't fix it as the code will not run if changed. 
+
 Requirements:
 
 The rules of playing Tic-Tac-Toe (modified version)
